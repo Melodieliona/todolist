@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.melodieliona.todolist.dto.TaskRequest;
+import com.melodieliona.todolist.dto.TaskResponse;
 import com.melodieliona.todolist.entity.Task;
 import com.melodieliona.todolist.service.TaskService;
 
@@ -34,18 +36,18 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public TaskResponse getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
-        Task savedTask = taskService.createTask(task);
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest task) {
+        TaskResponse savedTask = taskService.createTask(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @Valid @RequestBody Task updatedTask) {
+    public TaskResponse updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest updatedTask) {
         return taskService.updateTask(id, updatedTask);
     }
 
@@ -56,12 +58,12 @@ public class TaskController {
     }
 
     @GetMapping("/completed/{status}")
-    public List<Task> getCompletedTasks(@PathVariable boolean status) {
+    public List<TaskResponse> getCompletedTasks(@PathVariable boolean status) {
         return taskService.getTasksByCompletionStatus(status);
     }
 
     @GetMapping("/search")
-    public List<Task> searchByTitle(@RequestParam String title) {
+    public List<TaskResponse> searchByTitle(@RequestParam String title) {
         return taskService.searchTaskByTitleId(title);
     }
 
