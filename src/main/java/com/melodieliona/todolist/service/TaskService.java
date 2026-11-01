@@ -1,7 +1,8 @@
 package com.melodieliona.todolist.service;
 
 import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.melodieliona.todolist.dto.TaskRequest;
@@ -25,8 +26,12 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    public List<Task> getAllTask() {
+    public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public Page<Task> getAllTasks(Pageable pageable) {
+        return taskRepository.findAll(pageable);
     }
 
     public TaskResponse getTaskById(Long id) {
@@ -56,10 +61,18 @@ public class TaskService {
     }
 
     public List<TaskResponse> getTasksByCompletionStatus(boolean status) {
-        return taskRepository.findByCompleted(status);
+        final List<Task> completedTasks = taskRepository.findByCompleted(status);
+        return completedTasks.stream().map(taskMapper::toResponse).toList();
+    }
+
+    public Page<TaskResponse> getTasksByCompletionStatus(boolean status, Pageable pageable) {
+        final Page<Task> completedTasks = taskRepository.findByCompleted(status, pageable);
+        return completedTasks.map(taskMapper::toResponse);
     }
 
     public List<TaskResponse> searchTaskByTitleId(String title) {
-        return taskRepository.findByTitle(title);
+        List<Task> tasks = taskRepository.findByTitle(title);
+
+        return tasks.stream().map(taskMapper::toResponse).toList();
     }
 }
